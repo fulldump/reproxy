@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html ng-app="Reproxy">
+	<head>
+		<meta http-equiv="Content-Type" CONTENT="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Reproxy</title>
+		<link href="static/favicon.ico" rel="icon" type="image/x-icon">
+
+		<link rel="stylesheet" type="text/css" href="static/reproxy/reproxy.css">
+
+		<script src="static/angular/angular.min.js"></script>
+		<script src="static/reproxy/reproxy.js"></script>
+	</head>
+	<body ng-controller="MainCtrl as main">
+
+
+		<div  class="list">
+			<div class="input-border">
+				<input ng-model="input" ng-keyup="input_keyup($event)">
+			</div>
+			<ul>
+				<li ng-class="{selected: item.id==selected.id}" ng-repeat="item in items | filter:input" ng-click="select(item)">{{item.prefix}}</li>
+			</ul>
+		</div>
+
+		<div class="detail" ng-show="selected">
+			<div class="configuration">
+				<table style="width: 100%;">
+					<tr>
+						<td>prefix</td>
+						<td><input type="text" ng-model="selected.prefix"></td>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td><input type="text" ng-model="selected.url"></td>
+					</tr>
+					<tr>
+						<td>headers <button ng-click="add_header()">+</button> </td>
+						<td>
+							<table>
+								<tr ng-repeat="header in selected.headers">
+									<td><input type="text" ng-model="header.key"></td>
+									<td><input type="text" ng-model="header.value"></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+				<div class="buttons">
+					<button ng-click="save(selected)">Save</button>
+				</div>
+			</div>
+		</div>
+
+
+	</body>
+</html>

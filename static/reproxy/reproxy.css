@@ -1,0 +1,96 @@
+body {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 8px;
+
+	font-family: sans-serif;
+}
+
+.list {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 300px;
+}
+
+.list .input-border {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	border: solid silver 1px;
+	margin: 8px;
+}
+
+.list .input-border input {
+	display: block;
+	border: none;
+	width: 100%;
+	height: 20px;
+}
+
+.list > ul {
+	position: absolute;
+	top: 42px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: 8px;
+	list-style-type: none;
+}
+
+.list > ul > li {
+	display: block;
+	min-height: 16px;
+	padding: 8px;
+	cursor: pointer;
+}
+
+.list > ul > li:hover {
+	background-color: #F4F4F4;
+}
+
+.list > ul > li.selected {
+	color: white;
+	background-color: dodgerblue;
+}
+
+.detail {
+	position: absolute;
+	top: 0;
+	left: 300px;
+	right: 0;
+	bottom: 0;
+}
+
+.detail .configuration {
+	display: block;
+	padding: 8px;
+}
+
+.detail .configuration table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+
+.detail .configuration table td {
+	padding: 0;
+	vertical-align: top;
+}
+
+.detail .configuration table input[type="text"]{
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.detail .buttons {
+	text-align: center;
+}

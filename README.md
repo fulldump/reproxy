@@ -48,5 +48,5 @@ make all
 
 How to include static files into the binary:
 ```sh
-go run src/genstatic/genstatic.go --dir=static/ --package=apidoc > src/reproxy/files/data.go
+go run src/genstatic/genstatic.go --dir=static/ --package=files > src/reproxy/files/data.go
 ```

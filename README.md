@@ -18,6 +18,7 @@ Run it:
 
 Open [http://localhost:8000/reproxy/] and configure it.
 
+<img src="doc/screenshoot.png">
 
 Change the default port:
 ```sh
@@ -41,7 +42,7 @@ make
 
 How to build for all architectures:
 ```sh
-make all
+make build_all
 ```
 
 ### Static files

@@ -31,7 +31,7 @@ func addcontenttype(c *golax.Context, filename string) {
 	}
 }
 
-func readfile_pro(c *golax.Context, filename string) {
+func readfile(c *golax.Context, filename string) {
 	encoded, exists := Files[filename]
 	if !exists {
 		c.Error(404, "File '"+filename+"' not found")
@@ -51,7 +51,7 @@ func readfile_pro(c *golax.Context, filename string) {
 /**
  * Only for develop purposes
  */
-func readfile(c *golax.Context, filename string) {
+func readfile_dev(c *golax.Context, filename string) {
 	PREFIX := "static/"
 
 	bytes, err := ioutil.ReadFile(PREFIX + filename)

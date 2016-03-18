@@ -1,31 +1,37 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"net/http"
 
 	"github.com/fulldump/golax"
 
 	"reproxy/api"
 	"reproxy/config"
+	"reproxy/model"
 )
 
 func main() {
 
-	flag.Parse()
-	filename := flag.String("config", "config.json", "Configuration file")
-	config.Load(*filename)
+	fmt.Println(config.Banner)
+
+	model.Load(config.Filename)
 
 	proxy := api.NewReproxy()
-	Serve(proxy)
+	Serve(proxy, config.Address)
 
 }
 
-func Serve(a *golax.Api) {
+func Serve(a *golax.Api, address string) {
 	s := &http.Server{
-		Addr:    "0.0.0.0:8000",
+		Addr:    address,
 		Handler: a,
 	}
 
-	s.ListenAndServe()
+	fmt.Println("Listening at " + address)
+
+	err := s.ListenAndServe()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }

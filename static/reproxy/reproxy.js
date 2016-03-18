@@ -6,6 +6,12 @@ angular
 
 	$scope.items = [];
 	$scope.selected = null;
+	$scope.response = null;
+	$scope.types = [
+		{name: 'custom', description: 'Custom static response',},
+		{name: 'statics', description: 'Serve static files',},
+		{name: 'proxy', description: 'Proxy to an http server',},
+	];
 
 	$scope.reload = function() {
 		$http({
@@ -21,7 +27,8 @@ angular
 		);
 	};
 
-	$scope.save = function(item) {
+	$scope.save_selected = function() {
+		var item = $scope.selected;
 		$http({
 			method: 'PUT',
 			url: 'config/'+item.id,
@@ -36,17 +43,45 @@ angular
 		);
 	};
 
-	$scope.select = function(item) {
-		$scope.selected = item;
+	$scope.try_selected = function() {
+		var item = $scope.selected;
+
+		var on_receive = function(response) {
+			$scope.response = response;
+			console.log(response);
+			console.log(response.headers());
+		};
+
+		$http.get(item.prefix).then(on_receive, on_receive);
 	};
 
-	$scope.add_header = function() {
-		if (null !== $scope.selected) {
-			$scope.selected.headers.push({
-				key: 'New-Key',
-				value: 'new value',
+	$scope.select = function(item) {
+		$scope.selected = item;
+		$scope.response = null;
+	};
+
+	$scope.remove_selected = function() {
+		var item = $scope.selected;
+		if (confirm('You are going to remove this rule \''+$scope.selected.prefix+'\' are you sure?')) {
+			$http({
+				method: 'DELETE',
+				url: 'config/'+$scope.selected.id,
+			}).then(function(response) {
+				$scope.selected = null;
+				$scope.reload();
 			});
 		}
+	};
+
+	$scope.add_header = function(headers) {
+		headers.push({
+			key: 'New-Key',
+			value: 'new value',
+		});
+	};
+
+	$scope.remove_header = function(headers, id) {
+		headers.splice(id, 1);
 	};
 
 	$scope.input_keyup = function(e) {

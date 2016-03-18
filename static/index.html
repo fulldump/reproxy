@@ -16,7 +16,7 @@
 
 		<div  class="list">
 			<div class="input-border">
-				<input ng-model="input" ng-keyup="input_keyup($event)">
+				<input ng-model="input" ng-keyup="input_keyup($event)" placeholder="Type /yourprefix and hit enter">
 			</div>
 			<ul>
 				<li ng-class="{selected: item.id==selected.id}" ng-repeat="item in items | filter:input" ng-click="select(item)">{{item.prefix}}</li>
@@ -31,27 +31,121 @@
 						<td><input type="text" ng-model="selected.prefix"></td>
 					</tr>
 					<tr>
-						<td>url</td>
-						<td><input type="text" ng-model="selected.url"></td>
-					</tr>
-					<tr>
-						<td>headers <button ng-click="add_header()">+</button> </td>
+						<td>type</td>
 						<td>
-							<table>
-								<tr ng-repeat="header in selected.headers">
+							<select name="singleSelect" ng-model="selected.type">
+								<option value="{{type.name}}" ng-repeat="type in types">{{type.name}} ({{type.description}})</option>
+							</select>
+						</td>
+					</tr>
+
+					<tr ng-show="selected.type=='custom'">
+						<td>status_code</td>
+						<td><input type="number" ng-model="selected.type_custom.status_code"></td>
+					</tr>
+					<tr ng-show="selected.type=='custom'">
+						<td>response_headers</td>
+						<td>
+							<table component="headers">
+								<tr ng-repeat="(header_id,header) in selected.type_custom.response_headers">
 									<td><input type="text" ng-model="header.key"></td>
+									<td>:</td>
 									<td><input type="text" ng-model="header.value"></td>
+									<td>
+										<button ng-click="remove_header(selected.type_custom.response_headers, header_id)" class="light">remove</button>
+									</td>
 								</tr>
 							</table>
+							<button class="light" ng-click="add_header(selected.type_custom.response_headers)">add header</button>
+						</td>
+					</tr>
+					<tr ng-show="selected.type=='custom'">
+						<td colspan="2">
+							body:<br>
+							<textarea class="body" ng-model="selected.type_custom.body"></textarea>
+						</td>
+					</tr>
+
+					<tr ng-show="selected.type=='statics'">
+						<td>directory</td>
+						<td><input type="text" ng-model="selected.type_statics.directory"></td>
+					</tr>
+					<tr ng-show="selected.type=='statics'">
+						<td>response_headers</td>
+						<td>
+							<table component="headers">
+								<tr ng-repeat="(header_id,header) in selected.type_statics.response_headers">
+									<td><input type="text" ng-model="header.key"></td>
+									<td>:</td>
+									<td><input type="text" ng-model="header.value"></td>
+									<td>
+										<button ng-click="remove_header(selected.type_statics.response_headers, header_id)" class="light">remove</button>
+									</td>
+								</tr>
+							</table>
+							<button class="light" ng-click="add_header(selected.type_statics.response_headers)">add header</button>
+						</td>
+					</tr>
+
+					<tr ng-show="selected.type=='proxy'">
+						<td>url</td>
+						<td><input type="text" ng-model="selected.type_proxy.url"></td>
+					</tr>
+					<tr ng-show="selected.type=='proxy'">
+						<td>response_headers</td>
+						<td>
+							<table component="headers">
+								<tr ng-repeat="(header_id,header) in selected.type_proxy.response_headers">
+									<td><input type="text" ng-model="header.key"></td>
+									<td>:</td>
+									<td><input type="text" ng-model="header.value"></td>
+									<td>
+										<button ng-click="remove_header(selected.type_proxy.response_headers, header_id)" class="light">remove</button>
+									</td>
+								</tr>
+							</table>
+							<button class="light" ng-click="add_header(selected.type_proxy.response_headers)">add header</button>
+						</td>
+					</tr>
+					<tr ng-show="selected.type=='proxy'">
+						<td>proxy_headers</td>
+						<td>
+							<table component="headers">
+								<tr ng-repeat="(header_id,header) in selected.type_proxy.proxy_headers">
+									<td><input type="text" ng-model="header.key"></td>
+									<td>:</td>
+									<td><input type="text" ng-model="header.value"></td>
+									<td>
+										<button ng-click="remove_header(selected.type_proxy.proxy_headers, header_id)" class="light">remove</button>
+									</td>
+								</tr>
+							</table>
+							<button class="light" ng-click="add_header(selected.type_proxy.proxy_headers)">add header</button>
 						</td>
 					</tr>
 				</table>
+
 				<div class="buttons">
-					<button ng-click="save(selected)">Save</button>
+					<button ng-click="remove_selected()">Remove</button>
+					<button ng-click="save_selected()">Save</button>
+					<button ng-click="try_selected()">Try!</button>
 				</div>
+
+				<div class="response" ng-show="response">
+					<div>
+						<code>{{response.status}} {{response.statusText}}</code>
+					</div>
+					<div>
+						<code><span ng-repeat="(k,v) in response.headers()">{{k}}: {{v}}
+						</span></code>
+					</div>
+					<div>
+						<code>{{response.data}}</code>
+					</div>
+				</div>
+
 			</div>
 		</div>
-
 
 	</body>
 </html>

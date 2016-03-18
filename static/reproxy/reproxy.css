@@ -82,15 +82,55 @@ body {
 .detail .configuration table td {
 	padding: 0;
 	vertical-align: top;
+	white-space: nowrap;
 }
 
-.detail .configuration table input[type="text"]{
+.detail .configuration table select,
+.detail .configuration table textarea,
+.detail .configuration table input[type="number"],
+.detail .configuration table input[type="text"] {
 	border: none;
 	margin: 0;
 	padding: 0;
 	width: 100%;
+	background-color: white;
+	box-shadow: 0 0 1px 1px rgba(0,0,0,0.2) inset;
+	font-family: sans-serif;
+	font-size: 14px;
+    margin-bottom: 2px;
+    min-height: 22px;
+}
+
+.detail .configuration textarea.body {
+	min-height: 160px;
+	max-width: 100%;
 }
 
 .detail .buttons {
 	text-align: center;
+	margin: 24px 0;
+}
+
+button.light {
+	border: none;
+	margin: 0 4px;
+	padding: 0;
+	background-color: transparent;
+	color: dodgerblue;
+}
+
+button.light:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.response code {
+	display: block;
+	border: solid darkgoldenrod 1px;
+	padding: 4px;
+	margin: 4px 0;
+	background-color: cornsilk;
+	border-radius: 4px;
+	overflow: auto;
+	white-space: pre-line;
 }

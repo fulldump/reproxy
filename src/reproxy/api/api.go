@@ -2,15 +2,17 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/fulldump/golax"
 
-	"reproxy/config"
 	"reproxy/files"
+	"reproxy/model"
 )
 
 func NewReproxy() *golax.Api {
@@ -37,18 +39,24 @@ func NewReproxy() *golax.Api {
 		Node("{{*}}").
 		Method("*", func(c *golax.Context) {
 
-		for _, e := range config.All() {
+		for _, e := range model.All() {
+
 			if strings.HasPrefix(c.Request.URL.Path, e.Prefix) {
-				director := func(r *http.Request) {
-					r = c.Request
-					r.URL.Scheme = "http"
-					r.URL.Host = e.Url
-					for _, header := range e.Headers {
-						c.Request.Header.Add(header.Key, header.Value)
-					}
+
+				var t = e.Type
+
+				if "custom" == t {
+					type_custom(c, e)
+				} else if "statics" == t {
+					type_statics(c, e)
+				} else if "proxy" == t {
+					type_proxy(c, e)
+				} else {
+					// Missconfiguration
+					fmt.Fprint(c.Response, `<h1>This gateway has not been configured</h1>`)
+					c.Response.WriteHeader(http.StatusBadGateway)
 				}
-				proxy := &httputil.ReverseProxy{Director: director}
-				proxy.ServeHTTP(c.Response, c.Request)
+
 				break
 			}
 		}
@@ -57,11 +65,62 @@ func NewReproxy() *golax.Api {
 	return a
 }
 
+func type_custom(c *golax.Context, e *model.Entry) {
+	custom := e.TypeCustom
+
+	for _, h := range custom.ResponseHeaders {
+		c.Response.Header().Set(h.Key, h.Value)
+	}
+
+	c.Response.WriteHeader(custom.StatusCode)
+
+	fmt.Fprint(c.Response, custom.Body)
+}
+
+func type_statics(c *golax.Context, e *model.Entry) {
+	statics := e.TypeStatics
+
+	for _, h := range statics.ResponseHeaders {
+		c.Response.Header().Set(h.Key, h.Value)
+	}
+
+	c.Request.URL.Path = strings.TrimPrefix(c.Request.URL.Path, e.Prefix)
+
+	d := http.Dir(statics.Directory)
+	http.FileServer(d).ServeHTTP(c.Response, c.Request)
+}
+
+func type_proxy(c *golax.Context, e *model.Entry) {
+	type_proxy := e.TypeProxy
+
+	director := func(r *http.Request) {
+
+		u, _ := url.Parse(type_proxy.Url)
+
+		r.Host = u.Host
+
+		r.URL.Scheme = u.Scheme
+		r.URL.Host = u.Host
+		r.URL.Path = u.Path + strings.TrimPrefix(r.URL.Path, e.Prefix)
+
+		for _, h := range type_proxy.ProxyHeaders {
+			r.Header.Add(h.Key, h.Value)
+		}
+	}
+
+	for _, h := range type_proxy.ResponseHeaders {
+		c.Response.Header().Set(h.Key, h.Value)
+	}
+
+	proxy := &httputil.ReverseProxy{Director: director}
+	proxy.ServeHTTP(c.Response, c.Request)
+}
+
 func list_config(c *golax.Context) {
 
 	data := []interface{}{}
 
-	for _, item := range config.All() {
+	for _, item := range model.All() {
 		data = append(data, item)
 	}
 
@@ -75,11 +134,11 @@ func get_config(c *golax.Context) {
 
 func delete_config(c *golax.Context) {
 	item := get_item(c)
-	config.Unset(item)
+	model.Unset(item)
 }
 
 func put_config(c *golax.Context) {
-	item := &config.Entry{}
+	item := &model.Entry{}
 	err := json.NewDecoder(c.Request.Body).Decode(item)
 
 	if nil != err {
@@ -87,12 +146,12 @@ func put_config(c *golax.Context) {
 		return
 	}
 
-	config.Set(item)
+	model.Set(item)
 }
 
 func create_config(c *golax.Context) {
 
-	item := &config.Entry{}
+	item := &model.Entry{}
 
 	json.NewDecoder(c.Request.Body).Decode(item)
 
@@ -101,13 +160,13 @@ func create_config(c *golax.Context) {
 		return
 	}
 
-	stored_item := config.GetByPrefix(item.Prefix)
+	stored_item := model.GetByPrefix(item.Prefix)
 	if nil != stored_item {
 		c.Error(http.StatusConflict, "Item already exists")
 		return
 	}
 
-	config.Set(item)
+	model.Set(item)
 
 	json.NewEncoder(c.Response).Encode(item)
 }
@@ -120,7 +179,7 @@ var interceptor_config_id = &golax.Interceptor{
 			return
 		}
 
-		item := config.GetById(id)
+		item := model.GetById(id)
 		if nil == item {
 			c.Error(404, "Element '"+strconv.Itoa(id)+"' does not exist")
 			return
@@ -130,9 +189,9 @@ var interceptor_config_id = &golax.Interceptor{
 	},
 }
 
-func get_item(c *golax.Context) *config.Entry {
+func get_item(c *golax.Context) *model.Entry {
 	if item, exist := c.Get("item"); exist {
-		return item.(*config.Entry)
+		return item.(*model.Entry)
 	}
 
 	return nil

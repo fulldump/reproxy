@@ -21,6 +21,7 @@ func NewReproxy() *golax.Api {
 	reproxy := a.Root.
 		Interceptor(golax.InterceptorError).
 		Interceptor(golax.InterceptorLog).
+		Method("*", all_proxy).
 		Node("reproxy")
 
 	reproxy.
@@ -37,32 +38,34 @@ func NewReproxy() *golax.Api {
 
 	a.Root.
 		Node("{{*}}").
-		Method("*", func(c *golax.Context) {
-
-		for _, e := range model.All() {
-
-			if strings.HasPrefix(c.Request.URL.Path, e.Prefix) {
-
-				var t = e.Type
-
-				if "custom" == t {
-					type_custom(c, e)
-				} else if "statics" == t {
-					type_statics(c, e)
-				} else if "proxy" == t {
-					type_proxy(c, e)
-				} else {
-					// Missconfiguration
-					fmt.Fprint(c.Response, `<h1>This gateway has not been configured</h1>`)
-					c.Response.WriteHeader(http.StatusBadGateway)
-				}
-
-				break
-			}
-		}
-	})
+		Method("*", all_proxy)
 
 	return a
+}
+
+func all_proxy(c *golax.Context) {
+
+	for _, e := range model.All() {
+
+		if strings.HasPrefix(c.Request.URL.Path, e.Prefix) {
+
+			var t = e.Type
+
+			if "custom" == t {
+				type_custom(c, e)
+			} else if "statics" == t {
+				type_statics(c, e)
+			} else if "proxy" == t {
+				type_proxy(c, e)
+			} else {
+				// Missconfiguration
+				fmt.Fprint(c.Response, `<h1>This gateway has not been configured</h1>`)
+				c.Response.WriteHeader(http.StatusBadGateway)
+			}
+
+			break
+		}
+	}
 }
 
 func type_custom(c *golax.Context, e *model.Entry) {

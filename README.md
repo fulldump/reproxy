@@ -16,7 +16,7 @@ Run it:
 ./reproxy 
 ```
 
-Open [[http://localhost:8000/reproxy/]] and configure it.
+Open [http://localhost:8000/reproxy/](http://localhost:8000/reproxy/) and configure it.
 
 <img src="doc/screenshoot.png">
 

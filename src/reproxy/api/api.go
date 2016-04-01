@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -14,6 +15,17 @@ import (
 	"reproxy/files"
 	"reproxy/model"
 )
+
+type Priority struct {
+	Prefix string
+	Entry  *model.Entry
+}
+
+type ByPrefix []Priority
+
+func (v ByPrefix) Len() int           { return len(v) }
+func (v ByPrefix) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v ByPrefix) Less(i, j int) bool { return 0 < strings.Compare(v[i].Prefix, v[j].Prefix) }
 
 func NewReproxy() *golax.Api {
 	a := golax.NewApi()
@@ -45,7 +57,16 @@ func NewReproxy() *golax.Api {
 
 func all_proxy(c *golax.Context) {
 
+	pritorities := []Priority{}
+
 	for _, e := range model.All() {
+		pritorities = append(pritorities, Priority{e.Prefix, e})
+	}
+
+	sort.Sort(ByPrefix(pritorities))
+
+	for _, item := range pritorities {
+		e := item.Entry
 
 		if strings.HasPrefix(c.Request.URL.Path, e.Prefix) {
 

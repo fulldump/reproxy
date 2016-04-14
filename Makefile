@@ -32,10 +32,10 @@ build_all: test
 	@# https://golang.org/doc/install/source
 	GOARCH=amd64 GOOS=linux   $(GOBUILD) -o bin/$(PROJECT).linux64 $(PROJECT)
 	GOARCH=386   GOOS=linux   $(GOBUILD) -o bin/$(PROJECT).linux32 $(PROJECT)
-	GOARCH=amd64 GOOS=windows $(GOBUILD) -o bin/$(PROJECT).win64 $(PROJECT)
-	GOARCH=386   GOOS=windows $(GOBUILD) -o bin/$(PROJECT).win32 $(PROJECT)
 	GOARCH=amd64 GOOS=darwin  $(GOBUILD) -o bin/$(PROJECT).mac64 $(PROJECT)
 	GOARCH=386   GOOS=darwin  $(GOBUILD) -o bin/$(PROJECT).mac32 $(PROJECT)
+	GOARCH=amd64 GOOS=windows $(GOBUILD) -o bin/$(PROJECT).win64.exe $(PROJECT)
+	GOARCH=386   GOOS=windows $(GOBUILD) -o bin/$(PROJECT).win32.exe $(PROJECT)
 
 setup: clean
 	$(GOCMD) get $(PROJECT)

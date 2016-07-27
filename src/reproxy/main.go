@@ -7,19 +7,20 @@ import (
 	"github.com/fulldump/golax"
 
 	"reproxy/api"
-	"reproxy/config"
+	"reproxy/configuration"
+	"reproxy/constants"
 	"reproxy/model"
 )
 
 func main() {
+	fmt.Println(constants.BANNER)
 
-	fmt.Println(config.Banner)
+	c := configuration.Get()
 
-	model.Load(config.Filename)
+	model.Load(c.Filename)
 
-	proxy := api.NewReproxy()
-	Serve(proxy, config.Address)
-
+	proxy := api.NewReproxy(c.Endpoint)
+	Serve(proxy, c.Address)
 }
 
 func Serve(a *golax.Api, address string) {

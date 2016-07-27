@@ -15,8 +15,8 @@ RELEASE = $(shell git log --pretty=oneline | wc -l | tr -d ' ')
 COMMIT = $(shell git log -1 --format="%h" 2>/dev/null || echo "0")
 BUILD_DATE = $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 FLAGS = -ldflags "\
-  -X main.VERSION=$(VERSION)-$(COMMIT) \
-  -X main.BUILD_DATE=$(BUILD_DATE) \
+  -X reproxy/constants.VERSION=$(VERSION)-$(COMMIT) \
+  -X reproxy/constants.BUILD_DATE=$(BUILD_DATE) \
   "
 
 GOBUILD = $(GOCMD) build $(FLAGS)

@@ -27,14 +27,14 @@ func (v ByPrefix) Len() int           { return len(v) }
 func (v ByPrefix) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
 func (v ByPrefix) Less(i, j int) bool { return 0 < strings.Compare(v[i].Prefix, v[j].Prefix) }
 
-func NewReproxy() *golax.Api {
+func NewReproxy(endpoint string) *golax.Api {
 	a := golax.NewApi()
 
 	reproxy := a.Root.
 		Interceptor(golax.InterceptorError).
 		Interceptor(golax.InterceptorLog).
 		Method("*", all_proxy).
-		Node("reproxy")
+		Node(endpoint)
 
 	reproxy.
 		Node("config").

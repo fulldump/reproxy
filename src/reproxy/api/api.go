@@ -1,8 +1,10 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -15,6 +17,8 @@ import (
 	"reproxy/files"
 	"reproxy/model"
 )
+
+var LogIncommingTraffic = false
 
 type Priority struct {
 	Prefix string
@@ -119,6 +123,24 @@ func type_proxy(c *golax.Context, e *model.Entry) {
 
 	director := func(r *http.Request) {
 
+		if LogIncommingTraffic {
+			fmt.Println(r.Method, r.RequestURI, r.Proto)
+			fmt.Println("Host:", r.Host)
+			for k, values := range r.Header {
+				for _, v := range values {
+					fmt.Printf("%s: %s\n", k, v)
+				}
+			}
+
+			fmt.Println("")
+
+			body, _ := ioutil.ReadAll(r.Body)
+			r.Body = ioutil.NopCloser(bytes.NewReader(body))
+			// fmt.Println(body)
+			fmt.Printf("%s", body)
+			fmt.Println("")
+		}
+
 		u, _ := url.Parse(type_proxy.Url)
 
 		r.Host = u.Host
@@ -136,7 +158,9 @@ func type_proxy(c *golax.Context, e *model.Entry) {
 		c.Response.Header().Set(h.Key, h.Value)
 	}
 
-	proxy := &httputil.ReverseProxy{Director: director}
+	proxy := &httputil.ReverseProxy{
+		Director: director,
+	}
 	proxy.ServeHTTP(c.Response, c.Request)
 }
 

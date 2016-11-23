@@ -17,6 +17,8 @@ func main() {
 
 	c := configuration.Get()
 
+	api.LogIncommingTraffic = c.LogIncomming
+
 	model.Load(c.Filename)
 
 	proxy := api.NewReproxy(c.Endpoint)

@@ -9,10 +9,11 @@ import (
 )
 
 type Config struct {
-	Address  string `Default address to listen`
-	Filename string `Default configuration filename to save configuration`
-	Endpoint string `Configuration endpoint for reproxy`
-	Version  bool   `Show version`
+	Address      string `Default address to listen`
+	Filename     string `Default configuration filename to save configuration`
+	Endpoint     string `Configuration endpoint for reproxy`
+	LogIncomming bool   `Log incomming traffic`
+	Version      bool   `Show version`
 }
 
 var c *Config = nil

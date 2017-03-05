@@ -151,6 +151,9 @@ func type_proxy(c *golax.Context, e *model.Entry) {
 
 		for _, h := range type_proxy.ProxyHeaders {
 			r.Header.Add(h.Key, h.Value)
+			if "Host" == h.Key {
+				r.Host = h.Value
+			}
 		}
 	}
 

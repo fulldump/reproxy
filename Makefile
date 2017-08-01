@@ -1,6 +1,6 @@
 # Project specific variables
 PROJECT = reproxy
-DESCRIPTION = Consent system
+DESCRIPTION = Reverse Proxy
 
 # --- the rest of the file should not need to be configured ---
 
@@ -10,12 +10,13 @@ GO=go
 GOCMD=GOPATH=$(GOPATH) $(GO)
 
 # Build versioning
-VERSION = $(shell head -n 1 VERSION | tr -d '[[:space:]]')
+VERSION = $(shell git describe --tags --always)
 RELEASE = $(shell git log --pretty=oneline | wc -l | tr -d ' ')
 COMMIT = $(shell git log -1 --format="%h" 2>/dev/null || echo "0")
 BUILD_DATE = $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 FLAGS = -ldflags "\
-  -X reproxy/constants.VERSION=$(VERSION)-$(COMMIT) \
+  -X reproxy/constants.VERSION=$(VERSION) \
+  -X reproxy/constants.COMMIT=$(COMMIT) \
   -X reproxy/constants.BUILD_DATE=$(BUILD_DATE) \
   "
 

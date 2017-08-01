@@ -82,6 +82,8 @@ func all_proxy(c *golax.Context) {
 				type_statics(c, e)
 			} else if "proxy" == t {
 				type_proxy(c, e)
+			} else if "script" == t{
+				type_script(c, e)
 			} else {
 				// Missconfiguration
 				fmt.Fprint(c.Response, `<h1>This gateway has not been configured</h1>`)

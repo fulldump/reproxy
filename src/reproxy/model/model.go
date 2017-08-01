@@ -20,6 +20,7 @@ type Entry struct {
 	TypeCustom  TypeCustom  `json:"type_custom"`
 	TypeStatics TypeStatics `json:"type_statics"`
 	TypeProxy   TypeProxy   `json:"type_proxy"`
+	TypeScript  TypeScript  `json:"type_script"`
 }
 
 type TypeCustom struct {
@@ -37,6 +38,10 @@ type TypeProxy struct {
 	Url             string  `json:"url"`
 	ResponseHeaders Headers `json:"response_headers"`
 	ProxyHeaders    Headers `json:"proxy_headers"`
+}
+
+type TypeScript struct {
+	Code string `json:"code"`
 }
 
 type Headers []Header

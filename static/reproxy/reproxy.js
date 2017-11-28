@@ -10,7 +10,8 @@ angular
 	$scope.types = [
 		{name: 'custom', description: 'Custom static response',},
 		{name: 'statics', description: 'Serve static files',},
-		{name: 'proxy', description: 'Proxy to an http server',},
+        {name: 'proxy', description: 'Proxy to an http server',},
+        {name: 'script', description: 'Run script',},
 	];
 
 	$scope.reload = function() {

@@ -29,6 +29,7 @@ func Get() *Config {
 
 		if c.Version {
 			fmt.Println("Version: " + constants.VERSION)
+			fmt.Println("Commit: " + constants.COMMIT)
 			fmt.Println("Build date: " + constants.BUILD_DATE)
 			os.Exit(0)
 		}

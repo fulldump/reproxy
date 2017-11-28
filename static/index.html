@@ -39,6 +39,11 @@
 						</td>
 					</tr>
 
+					<tr ng-show="selected.type=='script'">
+						<td>script</td>
+						<td><textarea style="font-family: monospace; min-height: 400px;" ng-model="selected.type_script.code"></textarea></td>
+					</tr>
+
 					<tr ng-show="selected.type=='custom'">
 						<td>status_code</td>
 						<td><input type="number" ng-model="selected.type_custom.status_code"></td>

@@ -16,6 +16,7 @@ import (
 
 	"reproxy/files"
 	"reproxy/model"
+	"crypto/tls"
 )
 
 var LogIncommingTraffic = false
@@ -165,6 +166,9 @@ func type_proxy(c *golax.Context, e *model.Entry) {
 
 	proxy := &httputil.ReverseProxy{
 		Director: director,
+		Transport:&http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 	}
 	proxy.ServeHTTP(c.Response, c.Request)
 }

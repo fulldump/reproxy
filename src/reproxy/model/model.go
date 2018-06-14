@@ -38,6 +38,8 @@ type TypeProxy struct {
 	Url             string  `json:"url"`
 	ResponseHeaders Headers `json:"response_headers"`
 	ProxyHeaders    Headers `json:"proxy_headers"`
+	Key             string  `json:"key"`
+	Cert            string  `json:"cert"`
 }
 
 type TypeScript struct {
@@ -136,7 +138,7 @@ func save() {
 
 	fp, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Unable to create %v. Err: %v.", filename, err)
+		fmt.Printf("Unable to create %v. Err: %v.\n", filename, err)
 		return
 	}
 	defer fp.Close()
@@ -148,7 +150,7 @@ func save() {
 
 	encoder := json.NewEncoder(fp)
 	if err = encoder.Encode(data); err != nil {
-		fmt.Println("Unable to encode Json file. Err: %v.", err)
+		fmt.Printf("Unable to encode Json file. Err: %v.\n", err)
 		return
 	}
 

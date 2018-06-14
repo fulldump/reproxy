@@ -14,9 +14,9 @@ import (
 
 	"github.com/fulldump/golax"
 
+	"crypto/tls"
 	"reproxy/files"
 	"reproxy/model"
-	"crypto/tls"
 )
 
 var LogIncommingTraffic = false
@@ -83,7 +83,7 @@ func all_proxy(c *golax.Context) {
 				type_statics(c, e)
 			} else if "proxy" == t {
 				type_proxy(c, e)
-			} else if "script" == t{
+			} else if "script" == t {
 				type_script(c, e)
 			} else {
 				// Missconfiguration
@@ -123,6 +123,16 @@ func type_statics(c *golax.Context, e *model.Entry) {
 
 func type_proxy(c *golax.Context, e *model.Entry) {
 	type_proxy := e.TypeProxy
+
+	certs := []tls.Certificate{}
+	if type_proxy.Key != "" && type_proxy.Cert != "" {
+		cert, err := tls.X509KeyPair([]byte(type_proxy.Cert), []byte(type_proxy.Key))
+		if nil == err {
+			certs = append(certs, cert)
+		} else {
+			fmt.Println("Create cert error:", err)
+		}
+	}
 
 	director := func(r *http.Request) {
 
@@ -166,8 +176,11 @@ func type_proxy(c *golax.Context, e *model.Entry) {
 
 	proxy := &httputil.ReverseProxy{
 		Director: director,
-		Transport:&http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				Certificates:       certs,
+			},
 		},
 	}
 	proxy.ServeHTTP(c.Response, c.Request)

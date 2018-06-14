@@ -27,7 +27,7 @@
 			<div class="configuration">
 				<table style="width: 100%;">
 					<tr>
-						<td>prefix</td>
+						<td width="30">prefix</td>
 						<td><input type="text" ng-model="selected.prefix"></td>
 					</tr>
 					<tr>
@@ -92,10 +92,18 @@
 						</td>
 					</tr>
 
-					<tr ng-show="selected.type=='proxy'">
-						<td>url</td>
-						<td><input type="text" ng-model="selected.type_proxy.url"></td>
-					</tr>
+                    <tr ng-show="selected.type=='proxy'">
+                        <td>url</td>
+                        <td><input type="text" ng-model="selected.type_proxy.url"></td>
+                    </tr>
+                    <tr ng-show="selected.type=='proxy'">
+                        <td>Cert</td>
+						<td><textarea type="text" ng-model="selected.type_proxy.cert"></textarea></td>
+                    </tr>
+                    <tr ng-show="selected.type=='proxy'">
+                        <td>Key</td>
+						<td><textarea type="text" ng-model="selected.type_proxy.key"></textarea></td>
+                    </tr>
 					<tr ng-show="selected.type=='proxy'">
 						<td>response_headers</td>
 						<td>
